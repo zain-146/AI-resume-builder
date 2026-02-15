@@ -579,75 +579,123 @@ function calculateATSScore() {
     const resume = state.resume;
     const p = resume.personal;
 
-    // 1. Summary length (40-120 words)
-    const summaryWords = p.summary ? p.summary.split(/\s+/).filter(w => w).length : 0;
-    if (summaryWords >= 40 && summaryWords <= 120) {
+    // 1. Name (+10)
+    if (p.name && p.name.trim().length > 0) score += 10;
+    else improvements.push({ text: "Add your full name", points: 10 });
+
+    // 2. Email (+10)
+    if (p.email && p.email.trim().length > 0) score += 10;
+    else improvements.push({ text: "Add a professional email", points: 10 });
+
+    // 3. Phone (+5)
+    if (p.phone && p.phone.trim().length > 0) score += 5;
+    else improvements.push({ text: "Add your phone number", points: 5 });
+
+    // 4. LinkedIn (+5)
+    if (p.linkedin && p.linkedin.trim().length > 0) score += 5;
+    else improvements.push({ text: "Link your LinkedIn profile", points: 5 });
+
+    // 5. GitHub (+5)
+    if (p.github && p.github.trim().length > 0) score += 5;
+    else improvements.push({ text: "Link your GitHub repository", points: 5 });
+
+    // 6. Summary > 50 chars (+10)
+    const summaryText = p.summary || '';
+    if (summaryText.trim().length > 50) score += 10;
+    else improvements.push({ text: "Write a summary (min. 50 characters)", points: 10 });
+
+    // 7. Summary contains action verbs (+10)
+    const actionVerbs = ['built', 'led', 'designed', 'improved', 'developed', 'created', 'optimized', 'managed', 'implemented'];
+    const hasActionVerb = actionVerbs.some(v => summaryText.toLowerCase().includes(v));
+    if (hasActionVerb) score += 10;
+    else improvements.push({ text: "Use action verbs in summary (built, led, etc.)", points: 10 });
+
+    // 8. At least 1 experience with bullets/desc (+15)
+    if (resume.experience.length > 0 && resume.experience.some(e => e.desc && e.desc.trim().length > 5)) {
         score += 15;
     } else {
-        if (summaryWords < 40) improvements.push("Write a stronger summary (40–120 words).");
+        improvements.push({ text: "Add work experience with descriptions", points: 15 });
     }
 
-    // 2. At least 2 projects
-    if (resume.projects.length >= 2) {
-        score += 10;
-    } else {
-        improvements.push("Add at least 2 projects.");
-    }
+    // 9. At least 1 education (+10)
+    if (resume.education.length > 0) score += 10;
+    else improvements.push({ text: "Add your education background", points: 10 });
 
-    // 3. At least 1 experience entry
-    if (resume.experience.length >= 1) {
-        score += 10;
-    } else {
-        improvements.push("Add internship or project work experience.");
-    }
+    // 10. At least 1 project (+10)
+    if (resume.projects.length > 0) score += 10;
+    else improvements.push({ text: "Add at least one project", points: 10 });
 
-    // 4. Skills list has >= 8 items
-    const s = resume.skills;
-    const totalSkills = s.technical.length + s.soft.length + s.tools.length;
-    if (totalSkills >= 8) {
-        score += 10;
-    } else {
-        improvements.push("Add more skills (target 8+ keywords).");
-    }
-
-    // 5. GitHub or LinkedIn exists
-    if (p.github || p.linkedin) {
-        score += 10;
-    }
-
-    // 6. Measurable impact (numbers) in experience or project bullets
-    const hasNumbers = (entry) => {
-        const text = (entry.desc || '').toLowerCase();
-        return /[0-9]/.test(text);
-    };
-    const anyNumbers = [...resume.experience, ...resume.projects].some(hasNumbers);
-    if (anyNumbers) {
-        score += 15;
-    } else {
-        improvements.push("Add measurable impact (numbers) in bullets.");
-    }
-
-    // 7. Education complete
-    const eduComplete = resume.education.length > 0 && resume.education.every(e => e.school && e.degree && e.year);
-    if (eduComplete) {
-        score += 10;
-    }
+    // 11. At least 5 skills (+10)
+    const totalSkills = resume.skills.technical.length + resume.skills.soft.length + resume.skills.tools.length;
+    if (totalSkills >= 5) score += 10;
+    else improvements.push({ text: "Target at least 5 skills", points: 10 });
 
     score = Math.min(100, score);
-    return { score, suggestions: improvements.slice(0, 3) };
+    return { score, suggestions: improvements };
 }
 
 function renderATSScore() {
     const { score, suggestions } = calculateATSScore();
+
+    // 1. Update Builder UI (Simple bar)
     const scoreVal = document.getElementById('ats-score-value');
     const meterFill = document.getElementById('ats-meter-fill');
     const suggestionsList = document.getElementById('ats-suggestions');
 
     if (scoreVal) scoreVal.innerText = score;
     if (meterFill) meterFill.style.width = `${score}%`;
-
     if (suggestionsList) {
-        suggestionsList.innerHTML = suggestions.map(s => `<div class="suggestion-item">${s}</div>`).join('');
+        suggestionsList.innerHTML = suggestions.slice(0, 3).map(s => `<div class="suggestion-item">${s.text}</div>`).join('');
+    }
+
+    // 2. Update Preview Page UI (Circular)
+    const previewScoreVal = document.getElementById('score-value-preview');
+    const previewProgress = document.getElementById('score-progress-preview');
+    const previewLevel = document.getElementById('score-level-preview');
+    const previewSuggestionsList = document.getElementById('suggestions-preview-list');
+    const previewWrapper = document.querySelector('.score-display-preview');
+
+    if (previewScoreVal) previewScoreVal.innerText = score;
+
+    if (previewProgress) {
+        const radius = 45;
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference - (score / 100) * circumference;
+        previewProgress.style.strokeDasharray = `${circumference}`;
+        previewProgress.style.strokeDashoffset = offset;
+    }
+
+    if (previewLevel) {
+        let level = 'Needs Work';
+        let levelClass = 'score-level-red';
+        let statusClass = 'score-status-red';
+
+        if (score > 70) {
+            level = 'Strong Resume';
+            levelClass = 'score-level-green';
+            statusClass = 'score-status-green';
+        } else if (score > 40) {
+            level = 'Getting There';
+            levelClass = 'score-level-amber';
+            statusClass = 'score-status-amber';
+        }
+
+        previewLevel.innerText = level;
+        previewLevel.className = `score-level-badge ${levelClass}`;
+        if (previewWrapper) {
+            previewWrapper.className = `score-display-preview ${statusClass}`;
+        }
+    }
+
+    if (previewSuggestionsList) {
+        previewSuggestionsList.innerHTML = suggestions.length > 0
+            ? suggestions.map(s => `
+                <div class="suggestion-preview-item">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>${s.text} <span class="suggestion-points">+${s.points} points</span></span>
+                </div>
+            `).join('')
+            : '<div class="suggestion-preview-item" style="color: #10b981;"><i class="fas fa-check-circle" style="color: #10b981;"></i> Your resume is strong!</div>';
     }
 }
 

@@ -297,7 +297,31 @@
                         </div>
                     </div>
                 </div>
+                <div class="score-display-preview no-print">
+                    <div class="score-circle-container">
+                        <svg class="score-svg" viewBox="0 0 100 100">
+                            <circle class="score-bg" cx="50" cy="50" r="45"></circle>
+                            <circle class="score-progress" cx="50" cy="50" r="45" id="score-progress-preview"></circle>
+                        </svg>
+                        <div class="score-text-preview">
+                            <span id="score-value-preview">0</span>
+                            <span class="score-percent">%</span>
+                        </div>
+                    </div>
+                    <div class="score-info-preview">
+                        <div class="score-level-badge" id="score-level-preview">Needs Work</div>
+                        <p class="text-small">ATS Readiness Score</p>
+                    </div>
+                </div>
+
                 <p class="text-small">Clean, minimal, ATS-ready layout.</p>
+
+                <div class="suggestions-preview-container no-print">
+                    <h4>How to improve your score</h4>
+                    <div id="suggestions-preview-list" class="suggestions-preview-list">
+                        <!-- Suggestions will be injected here -->
+                    </div>
+                </div>
                 <div style="margin-top: 16px; display: flex; gap: 12px; justify-content: center;" class="no-print">
                     <button class="btn btn-primary" onclick="exportToPDF()">
                         <i class="fas fa-file-pdf" style="margin-right: 8px;"></i> Print / Save as PDF
