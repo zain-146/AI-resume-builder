@@ -44,17 +44,31 @@ body {
 }
 
 /* TYPOGRAPHY */
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
     font-family: var(--font-serif);
     font-weight: 700;
     margin-bottom: var(--space-2);
 }
 
-h1 { font-size: 48px; letter-spacing: -0.02em; }
-h2 { font-size: 32px; }
-h3 { font-size: 20px; }
+h1 {
+    font-size: 48px;
+    letter-spacing: -0.02em;
+}
 
-p { margin-bottom: var(--space-2); }
+h2 {
+    font-size: 32px;
+}
+
+h3 {
+    font-size: 20px;
+}
+
+p {
+    margin-bottom: var(--space-2);
+}
 
 .subtext {
     font-size: 18px;
@@ -91,20 +105,39 @@ p { margin-bottom: var(--space-2); }
     transition: color var(--transition);
 }
 
-.nav-links a:hover { color: var(--color-accent); }
-.nav-links a.active { color: var(--color-accent); font-weight: 600; }
+.nav-links a:hover {
+    color: var(--color-accent);
+}
+
+.nav-links a.active {
+    color: var(--color-accent);
+    font-weight: 600;
+}
 
 .page-container {
     padding: var(--space-4);
     min-height: calc(100vh - 64px);
 }
 
-.page { display: none; }
-.page.active { display: block; animation: fadeIn 0.3s ease-out; }
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+}
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* HOME PAGE */
@@ -123,7 +156,9 @@ p { margin-bottom: var(--space-2); }
 }
 
 @media (max-width: 1024px) {
-    .builder-layout { grid-template-columns: 1fr; }
+    .builder-layout {
+        grid-template-columns: 1fr;
+    }
 }
 
 .form-workspace {
@@ -139,9 +174,13 @@ p { margin-bottom: var(--space-2); }
     border-bottom: 1px solid var(--color-bg);
 }
 
-.form-section:last-child { border-bottom: none; }
+.form-section:last-child {
+    border-bottom: none;
+}
 
-.form-group { margin-bottom: var(--space-2); }
+.form-group {
+    margin-bottom: var(--space-2);
+}
 
 .input-label {
     display: block;
@@ -184,11 +223,23 @@ p { margin-bottom: var(--space-2); }
     text-decoration: none;
 }
 
-.btn-primary { background: var(--color-accent); color: var(--color-white); }
-.btn-primary:hover { opacity: 0.8; }
+.btn-primary {
+    background: var(--color-accent);
+    color: var(--color-white);
+}
 
-.btn-secondary { background: transparent; color: var(--color-accent); }
-.btn-secondary:hover { background: rgba(0,0,0,0.05); }
+.btn-primary:hover {
+    opacity: 0.8;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--color-accent);
+}
+
+.btn-secondary:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
 
 /* Dynamic Entry List */
 .entry-list-item {
@@ -210,7 +261,7 @@ p { margin-bottom: var(--space-2); }
     width: 100%;
     padding: var(--space-4);
     border: 1px solid var(--color-border);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     overflow: hidden;
 }
 
@@ -222,11 +273,29 @@ p { margin-bottom: var(--space-2); }
 }
 
 /* Resume Aesthetics */
-.res-header { text-align: center; margin-bottom: var(--space-3); padding-bottom: var(--space-2); border-bottom: 2px solid var(--color-accent); }
-.res-name { font-size: 28px; font-family: var(--font-serif); font-weight: 700; text-transform: uppercase; }
-.res-contact { font-size: 12px; color: var(--color-text-muted); }
+.res-header {
+    text-align: center;
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 2px solid var(--color-accent);
+}
 
-.res-section { margin-bottom: var(--space-3); }
+.res-name {
+    font-size: 28px;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.res-contact {
+    font-size: 12px;
+    color: var(--color-text-muted);
+}
+
+.res-section {
+    margin-bottom: var(--space-3);
+}
+
 .res-section-title {
     font-size: 14px;
     font-weight: 700;
@@ -236,12 +305,94 @@ p { margin-bottom: var(--space-2); }
     padding-bottom: 2px;
 }
 
-.res-item { margin-bottom: var(--space-2); }
-.res-item-header { display: flex; justify-content: space-between; font-weight: 600; font-size: 13px; }
-.res-item-sub { font-size: 12px; font-style: italic; color: var(--color-text-muted); }
-.res-item-desc { font-size: 12px; margin-top: 4px; }
+.res-item {
+    margin-bottom: var(--space-2);
+}
 
-.res-skills { font-size: 12px; }
+.res-item-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.res-item-sub {
+    font-size: 12px;
+    font-style: italic;
+    color: var(--color-text-muted);
+}
+
+.res-item-desc {
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.res-skills {
+    font-size: 12px;
+}
+
+/* ATS SCORING UI */
+.ats-card {
+    background: var(--color-white);
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    margin-bottom: var(--space-3);
+}
+
+.ats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-1);
+}
+
+.ats-label {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+}
+
+.ats-score {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.ats-meter-container {
+    height: 6px;
+    background: var(--color-bg);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: var(--space-2);
+}
+
+.ats-meter-bar {
+    height: 100%;
+    background: var(--color-accent);
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ats-suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.suggestion-item {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.suggestion-item::before {
+    content: '•';
+    color: var(--color-accent);
+}
 
 /* Proof Page */
 .proof-card {
