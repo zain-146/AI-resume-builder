@@ -58,7 +58,9 @@ const state = {
         lovable: '',
         github: '',
         deploy: '',
-        shipped: false
+        shipped: false,
+        buildSteps: new Array(8).fill(false),
+        testChecklist: new Array(10).fill(false)
     }
 };
 
@@ -87,7 +89,11 @@ function loadState() {
     if (savedColor) state.selectedColor = savedColor;
 
     const savedSubmission = localStorage.getItem(SUBMISSION_KEY);
-    if (savedSubmission) state.finalSubmission = JSON.parse(savedSubmission);
+    if (savedSubmission) {
+        state.finalSubmission = JSON.parse(savedSubmission);
+        if (!state.finalSubmission.buildSteps) state.finalSubmission.buildSteps = new Array(8).fill(false);
+        if (!state.finalSubmission.testChecklist) state.finalSubmission.testChecklist = new Array(10).fill(false);
+    }
 }
 
 function syncInputsFromState() {
@@ -842,6 +848,18 @@ window.addEventListener('DOMContentLoaded', () => {
     renderATSScore();
 });
 // --- PROOF & SHIPPING LOGIC ---
+function toggleStep(index) {
+    state.finalSubmission.buildSteps[index] = !state.finalSubmission.buildSteps[index];
+    saveState();
+    renderProofPage();
+}
+
+function toggleTest(index) {
+    state.finalSubmission.testChecklist[index] = !state.finalSubmission.testChecklist[index];
+    saveState();
+    renderProofPage();
+}
+
 function updateProofData(field, value) {
     state.finalSubmission[field] = value;
     saveState();
@@ -873,21 +891,8 @@ function validateProofLinks() {
 function checkShippingStatus() {
     const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
 
-    // 1. All steps complete (simulation as per task requirements)
-    const stepsComplete = true; // In a real app, we'd check each step's logic
-
-    // 2. All 10 tests passed (simulated based on app features presence)
-    const resume = state.resume;
-    const testsPassed = (
-        resume.personal.name &&
-        resume.personal.email &&
-        resume.experience.length > 0 &&
-        resume.education.length > 0 &&
-        resume.projects.length > 0 &&
-        (resume.skills.technical.length + resume.skills.soft.length + resume.skills.tools.length) >= 5
-    );
-
-    // 3. Artifact links valid
+    const stepsComplete = state.finalSubmission.buildSteps.every(s => s === true);
+    const testsPassed = state.finalSubmission.testChecklist.every(t => t === true);
     const linksValid = (
         urlPattern.test(state.finalSubmission.lovable) &&
         urlPattern.test(state.finalSubmission.github) &&
@@ -916,43 +921,40 @@ function updateShippingUI(isShipped) {
 }
 
 function renderProofPage() {
-    // Sync inputs
     const fusible = ['lovable', 'github', 'deploy'];
     fusible.forEach(f => {
         const el = document.getElementById(`proof-${f}`);
         if (el) el.value = state.finalSubmission[f] || '';
     });
 
-    // Render Steps
     const stepsList = document.getElementById('steps-overview-list');
     if (stepsList) {
         stepsList.innerHTML = BUILD_STEPS.map((step, i) => `
-            <div class="status-item">
+            <div class="status-item" style="cursor: pointer;" onclick="toggleStep(${i})">
                 <div class="status-marker">
-                    <div class="status-dot dot-done"></div>
+                    <div class="status-dot ${state.finalSubmission.buildSteps[i] ? 'dot-done' : 'dot-todo'}"></div>
                     <span>Step ${i + 1}: ${step}</span>
                 </div>
-                <span class="status-label-done">DONE</span>
+                <span class="status-label-${state.finalSubmission.buildSteps[i] ? 'done' : 'todo'}">
+                    ${state.finalSubmission.buildSteps[i] ? 'DONE' : 'TODO'}
+                </span>
             </div>
         `).join('');
     }
 
-    // Render Tests
     const testsList = document.getElementById('tests-overview-list');
     if (testsList) {
-        const { score } = calculateATSScore();
-        testsList.innerHTML = TEST_CHECKLIST.map((test, i) => {
-            // Simulate status based on actual state for key tests
-            let isPassed = true; // Default to true for completed milestones
-            return `
-            <div class="status-item">
+        testsList.innerHTML = TEST_CHECKLIST.map((test, i) => `
+            <div class="status-item" style="cursor: pointer;" onclick="toggleTest(${i})">
                 <div class="status-marker">
-                    <div class="status-dot dot-done"></div>
+                    <div class="status-dot ${state.finalSubmission.testChecklist[i] ? 'dot-done' : 'dot-todo'}"></div>
                     <span>${test}</span>
                 </div>
-                <span class="status-label-done">PASSED</span>
+                <span class="status-label-${state.finalSubmission.testChecklist[i] ? 'done' : 'todo'}">
+                    ${state.finalSubmission.testChecklist[i] ? 'PASSED' : 'TODO'}
+                </span>
             </div>
-        `}).join('');
+        `).join('');
     }
 
     validateProofLinks();
