@@ -403,8 +403,11 @@ function copyAsText() {
         });
     }
 
-    if (r.skills) {
-        text += `\nSKILLS\n${r.skills}\n`;
+    if (state.resume.skills) {
+        text += `\nSKILLS\n`;
+        if (state.resume.skills.technical.length > 0) text += `Technical: ${state.resume.skills.technical.join(', ')}\n`;
+        if (state.resume.skills.soft.length > 0) text += `Soft Skills: ${state.resume.skills.soft.join(', ')}\n`;
+        if (state.resume.skills.tools.length > 0) text += `Tools: ${state.resume.skills.tools.join(', ')}\n`;
     }
 
     navigator.clipboard.writeText(text).then(() => {
