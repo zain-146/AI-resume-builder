@@ -36,6 +36,11 @@ function handleRouting() {
 
     if (activeRoute === 'builder' || activeRoute === 'preview') {
         renderResume();
+        if (activeRoute === 'builder') {
+            renderFormEntries('experience');
+            renderFormEntries('education');
+            renderFormEntries('projects');
+        }
     }
 }
 
