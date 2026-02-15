@@ -45,7 +45,7 @@ function initFormSync() {
         input.addEventListener('input', (e) => {
             const field = e.target.getAttribute('data-field');
             const value = e.target.value;
-            
+
             // Handle personal context
             if (field.startsWith('personal.')) {
                 const subfield = field.split('.')[1];
@@ -53,7 +53,7 @@ function initFormSync() {
             } else {
                 state.resume[field] = value;
             }
-            
+
             renderResume();
         });
     });
@@ -63,9 +63,9 @@ function initFormSync() {
 function renderResume() {
     const mini = document.getElementById('mini-preview');
     const full = document.getElementById('full-preview');
-    
+
     const html = generateResumeHTML();
-    
+
     if (mini) mini.innerHTML = html;
     if (full) full.innerHTML = html;
 }
@@ -73,7 +73,7 @@ function renderResume() {
 function generateResumeHTML() {
     const p = state.resume.personal;
     const skills = state.resume.skills.split(',').map(s => s.trim()).filter(s => s);
-    
+
     return `
         <div class="res-header">
             <div class="res-name">${p.name || 'Your Name'}</div>
@@ -94,13 +94,26 @@ function generateResumeHTML() {
             ${state.resume.experience.length > 0 ? state.resume.experience.map(exp => `
                 <div class="res-item">
                     <div class="res-item-header">
-                        <span>${exp.role}</span>
-                        <span>${exp.duration}</span>
+                        <span>${exp.role || 'Role'}</span>
+                        <span>${exp.duration || '2022 - Present'}</span>
                     </div>
-                    <div class="res-item-sub">${exp.company}</div>
-                    <div class="res-item-desc">${exp.desc}</div>
+                    <div class="res-item-sub">${exp.company || 'Company'}</div>
+                    <div class="res-item-desc">${exp.desc || 'Description of your responsibilities.'}</div>
                 </div>
-            `).join('') : '<p class="res-item-desc">Software Engineer at Tech Corp (2022 - Present)...</p>'}
+            `).join('') : '<p class="res-item-desc">Enterprise experience entries will appear here.</p>'}
+        </div>
+
+        <div class="res-section">
+            <div class="res-section-title">Projects</div>
+            ${state.resume.projects.length > 0 ? state.resume.projects.map(proj => `
+                <div class="res-item">
+                    <div class="res-item-header">
+                        <span>${proj.title || 'Project Title'}</span>
+                        <span>${proj.link || ''}</span>
+                    </div>
+                    <div class="res-item-desc">${proj.desc || 'Description of your project work.'}</div>
+                </div>
+            `).join('') : '<p class="res-item-desc">Project highlights will appear here.</p>'}
         </div>
 
         <div class="res-section">
@@ -108,21 +121,74 @@ function generateResumeHTML() {
             ${state.resume.education.length > 0 ? state.resume.education.map(edu => `
                 <div class="res-item">
                     <div class="res-item-header">
-                        <span>${edu.degree}</span>
-                        <span>${edu.year}</span>
+                        <span>${edu.degree || 'Degree'}</span>
+                        <span>${edu.year || '2020'}</span>
                     </div>
-                    <div class="res-item-sub">${edu.school}</div>
+                    <div class="res-item-sub">${edu.school || 'University'}</div>
                 </div>
-            `).join('') : '<p class="res-item-desc">B.Tech in Computer Science, NIT Karnataka (2020)</p>'}
+            `).join('') : '<p class="res-item-desc">Academic background will appear here.</p>'}
         </div>
 
         <div class="res-section">
             <div class="res-section-title">Skills</div>
             <div class="res-skills">
-                ${skills.length > 0 ? skills.join(' • ') : 'React • Node.js • TypeScript • Cloud Computing'}
+                ${skills.length > 0 ? skills.join(' • ') : 'Technical expertise listed here.'}
             </div>
         </div>
     `;
+}
+
+// --- DYNAMIC LISTS ---
+function addEntry(type) {
+    const entry = {};
+    if (type === 'experience') {
+        entry.company = '';
+        entry.role = '';
+        entry.duration = '';
+        entry.desc = '';
+    } else if (type === 'education') {
+        entry.school = '';
+        entry.degree = '';
+        entry.year = '';
+    } else if (type === 'projects') {
+        entry.title = '';
+        entry.desc = '';
+        entry.link = '';
+    }
+
+    state.resume[type].push(entry);
+    renderFormEntries(type);
+    renderResume();
+}
+
+function removeEntry(type, index) {
+    state.resume[type].splice(index, 1);
+    renderFormEntries(type);
+    renderResume();
+}
+
+function renderFormEntries(type) {
+    const list = document.getElementById(`${type}-form-list`);
+    if (!list) return;
+
+    list.innerHTML = state.resume[type].map((entry, i) => `
+        <div class="entry-list-item">
+            <div style="display: flex; justify-content: flex-end;">
+                <button onclick="removeEntry('${type}', ${i})" style="background: none; border: none; font-size: 10px; color: red; cursor: pointer;">Remove</button>
+            </div>
+            ${Object.keys(entry).map(key => `
+                <div class="form-group">
+                    <label class="input-label">${key}</label>
+                    <input type="text" class="form-control" value="${entry[key]}" oninput="updateEntry('${type}', ${i}, '${key}', this.value)">
+                </div>
+            `).join('')}
+        </div>
+    `).join('');
+}
+
+function updateEntry(type, index, key, value) {
+    state.resume[type][index][key] = value;
+    renderResume();
 }
 
 // --- ACTIONS ---
@@ -143,7 +209,9 @@ function loadSampleData() {
         education: [
             { school: 'Indian Institute of Technology', degree: 'B.Tech Computer Science', year: '2023' }
         ],
-        projects: [],
+        projects: [
+            { title: 'AI Build Tracker', link: 'github.com/zain/ai-build', desc: 'A real-time project management tool with AI artifact verification.' }
+        ],
         skills: 'JavaScript, React, Tailwind CSS, Node.js, Git, Figma'
     };
 
@@ -158,6 +226,9 @@ function loadSampleData() {
         }
     });
 
+    renderFormEntries('experience');
+    renderFormEntries('education');
+    renderFormEntries('projects');
     renderResume();
 }
 
