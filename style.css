@@ -1256,3 +1256,28 @@ p {
     color: #10b981;
     font-size: 20px;
 }
+
+/* PRINT STYLES - PREMIUM PDF EXPORT */
+@media print {
+    body {
+        background: white !important;
+    }
+    .top-nav, .no-print, .customization-container, button, .toast, .validation-warning, .score-display-preview, .suggestions-preview-container {
+        display: none !important;
+    }
+    .page-container {
+        padding: 0 !important;
+    }
+    .page {
+        display: none !important;
+    }
+    .page.active {
+        display: block !important;
+    }
+    .resume-paper {
+        border: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+}

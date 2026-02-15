@@ -374,7 +374,10 @@ function showToast(message) {
 
 function exportToPDF() {
     validateBeforeExport();
-    showToast("PDF export ready! Check your downloads.");
+    showToast("Opening print dialog. Select 'Save as PDF' for best results.");
+    setTimeout(() => {
+        window.print();
+    }, 500);
 }
 
 function copyAsText() {
