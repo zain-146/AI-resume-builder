@@ -123,20 +123,50 @@
                     <div class="form-section">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <h3>Projects</h3>
-                            <button class="btn btn-secondary" onclick="addEntry('projects')"
-                                style="padding: 4px 12px; font-size: 11px;">+ Add</button>
+                            <button class="btn btn-secondary" onclick="addProjectEntry()"
+                                style="padding: 4px 12px; font-size: 11px;">+ Add Project</button>
                         </div>
-                        <div id="projects-form-list">
-                            <!-- Dynamic form items -->
+                        <div id="projects-form-list" class="accordion-list">
+                            <!-- Dynamic accordion items -->
                         </div>
                     </div>
 
                     <div class="form-section">
-                        <h3>Skills</h3>
-                        <div class="form-group">
-                            <label class="input-label">Comma separated skills</label>
-                            <input type="text" class="form-control" data-field="skills"
-                                placeholder="React, Node.js, TypeScript, AWS">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <h3>Skills</h3>
+                            <button class="btn btn-secondary" onclick="suggestSkills(this)" id="suggest-skills-btn"
+                                style="padding: 4px 12px; font-size: 11px;">✨ Suggest Skills</button>
+                        </div>
+
+                        <!-- Technical Skills -->
+                        <div class="skill-category-group">
+                            <label class="input-label" id="label-tech-skills">Technical Skills (0)</label>
+                            <div class="tag-input-container">
+                                <div id="tech-skills-tags" class="tag-chips"></div>
+                                <input type="text" class="tag-input" placeholder="Type and press Enter..."
+                                    onkeydown="handleSkillInput(event, 'technical')">
+                            </div>
+                        </div>
+
+                        <!-- Soft Skills -->
+                        <div class="skill-category-group">
+                            <label class="input-label" id="label-soft-skills">Soft Skills (0)</label>
+                            <div class="tag-input-container">
+                                <div id="soft-skills-tags" class="tag-chips"></div>
+                                <input type="text" class="tag-input" placeholder="Type and press Enter..."
+                                    onkeydown="handleSkillInput(event, 'soft')">
+                            </div>
+                        </div>
+
+                        <!-- Tools & Tech -->
+                        <div class="skill-category-group">
+                            <label class="input-label" id="label-tools-skills">Tools & Technologies (0)</label>
+                            <div class="tag-input-container">
+                                <div id="tools-skills-tags" class="tag-chips"></div>
+                                <input type="text" class="tag-input" placeholder="Type and press Enter..."
+                                    onkeydown="handleSkillInput(event, 'tools')">
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -16,9 +16,14 @@ const state = {
         experience: [],
         education: [],
         projects: [],
-        skills: ''
+        skills: {
+            technical: [],
+            soft: [],
+            tools: []
+        }
     },
-    selectedTemplate: 'classic'
+    selectedTemplate: 'classic',
+    activeProjectIndex: null
 };
 
 const STORAGE_KEY = 'resumeBuilderData';
@@ -32,7 +37,21 @@ function saveState() {
 function loadState() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
-        state.resume = JSON.parse(saved);
+        let loaded = JSON.parse(saved);
+        // Migration/Initialization for new structures
+        if (typeof loaded.skills === 'string') {
+            loaded.skills = { technical: loaded.skills.split(',').map(s => s.trim()).filter(s => s), soft: [], tools: [] };
+        }
+        if (loaded.projects.length > 0 && typeof loaded.projects[0].techStack === 'undefined') {
+            loaded.projects = loaded.projects.map(p => ({
+                title: p.title || '',
+                desc: p.desc || '',
+                techStack: [],
+                liveUrl: '',
+                githubUrl: ''
+            }));
+        }
+        state.resume = loaded;
         syncInputsFromState();
     }
     const savedTemplate = localStorage.getItem(TEMPLATE_KEY);
@@ -47,10 +66,12 @@ function syncInputsFromState() {
         if (field.startsWith('personal.')) {
             const subfield = field.split('.')[1];
             input.value = state.resume.personal[subfield] || '';
-        } else {
-            input.value = state.resume[field] || '';
         }
     });
+    renderSkillsTags();
+    renderProjectsForm();
+    renderFormEntries('experience');
+    renderFormEntries('education');
 }
 
 // --- ROUTING ---
@@ -126,7 +147,7 @@ function renderResume() {
 
 function generateResumeHTML() {
     const p = state.resume.personal;
-    const skills = state.resume.skills.split(',').map(s => s.trim()).filter(s => s);
+    const skills = state.resume.skills;
     const template = state.selectedTemplate;
 
     if (template === 'modern') {
@@ -145,12 +166,7 @@ function generateResumeHTML() {
                         ${p.linkedin ? `LinkedIn: ${p.linkedin}` : ''}
                     </div>
                 </div>
-                ${skills.length > 0 ? `
-                <div class="res-section">
-                    <div class="res-section-title">Skills</div>
-                    <div class="res-skills">${skills.join('<br>')}</div>
-                </div>
-                ` : ''}
+                ${renderSkillsPreviewHTML(skills)}
             </div>
             <div class="res-main">
                 ${p.summary ? `
@@ -182,11 +198,12 @@ function generateResumeHTML() {
                     `).join('')}
                 </div>
                 ` : ''}
+                ${renderProjectsPreviewHTML()}
             </div>
         `;
     }
 
-    // Classic / Minimal logic (shared mostly)
+    // Classic / Minimal logic
     let html = `
         <div class="res-header">
             <div class="res-name">${p.name || 'Your Name'}</div>
@@ -198,43 +215,71 @@ function generateResumeHTML() {
         </div>
     `;
 
-    // Summary
-    if (p.summary) {
-        html += `<div class="res-section"><div class="res-section-title">Summary</div><p class="res-item-desc">${p.summary}</p></div>`;
-    }
+    if (p.summary) html += `<div class="res-section"><div class="res-section-title">Summary</div><p class="res-item-desc">${p.summary}</p></div>`;
 
-    // Education
     if (state.resume.education.length > 0) {
         html += `<div class="res-section"><div class="res-section-title">Education</div>${state.resume.education.map(edu => `
             <div class="res-item"><div class="res-item-header"><span>${edu.degree || 'Degree'}</span><span>${edu.year || '2020'}</span></div><div class="res-item-sub">${edu.school || 'University'}</div></div>
         `).join('')}</div>`;
     }
 
-    // Experience
     if (state.resume.experience.length > 0) {
         html += `<div class="res-section"><div class="res-section-title">Experience</div>${state.resume.experience.map(exp => `
             <div class="res-item"><div class="res-item-header"><span>${exp.role || 'Role'}</span><span>${exp.duration || '2022 - Present'}</span></div><div class="res-item-sub">${exp.company || 'Company'}</div><div class="res-item-desc">${exp.desc || ''}</div></div>
         `).join('')}</div>`;
     }
 
-    // Projects
-    if (state.resume.projects.length > 0) {
-        html += `<div class="res-section"><div class="res-section-title">Projects</div>${state.resume.projects.map(proj => `
-            <div class="res-item"><div class="res-item-header"><span>${proj.title || 'Project Title'}</span><span>${proj.link || ''}</span></div><div class="res-item-desc">${proj.desc || ''}</div></div>
-        `).join('')}</div>`;
-    }
+    html += renderProjectsPreviewHTML();
+    html += renderSkillsPreviewHTML(skills);
 
-    // Skills
-    if (skills.length > 0) {
-        html += `<div class="res-section"><div class="res-section-title">Skills</div><div class="res-skills">${skills.join(' • ')}</div></div>`;
-    }
-
-    // Links
     if (p.github || p.linkedin) {
         html += `<div class="res-section"><div class="res-section-title">Links</div><div class="res-item-desc">${p.github ? `<strong>GitHub:</strong> ${p.github}<br>` : ''}${p.linkedin ? `<strong>LinkedIn:</strong> ${p.linkedin}` : ''}</div></div>`;
     }
 
     return html;
+}
+
+function renderSkillsPreviewHTML(skills) {
+    let html = '<div class="res-section"><div class="res-section-title">Skills</div>';
+
+    if (skills.technical.length > 0) {
+        html += `<div class="res-skills-group"><div class="res-skills-label">Technical</div><div class="res-skills">${skills.technical.join(' • ')}</div></div>`;
+    }
+    if (skills.soft.length > 0) {
+        html += `<div class="res-skills-group"><div class="res-skills-label">Soft Skills</div><div class="res-skills">${skills.soft.join(' • ')}</div></div>`;
+    }
+    if (skills.tools.length > 0) {
+        html += `<div class="res-skills-group"><div class="res-skills-label">Tools</div><div class="res-skills">${skills.tools.join(' • ')}</div></div>`;
+    }
+
+    html += '</div>';
+    return (skills.technical.length || skills.soft.length || skills.tools.length) ? html : '';
+}
+
+function renderProjectsPreviewHTML() {
+    if (state.resume.projects.length === 0) return '';
+    return `
+        <div class="res-section">
+            <div class="res-section-title">Projects</div>
+            ${state.resume.projects.map(proj => `
+                <div class="res-item">
+                    <div class="res-item-header">
+                        <span style="font-weight: 700;">${proj.title || 'Project Title'}</span>
+                        <div class="res-proj-links" style="display:inline-flex; gap:8px; margin-left:12px;">
+                            ${proj.githubUrl ? `<a href="${proj.githubUrl}" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>` : ''}
+                            ${proj.liveUrl ? `<a href="${proj.liveUrl}" target="_blank" title="Live"><i class="fas fa-external-link-alt"></i></a>` : ''}
+                        </div>
+                    </div>
+                    <div class="res-item-desc">${proj.desc || ''}</div>
+                    ${proj.techStack && proj.techStack.length > 0 ? `
+                        <div class="res-proj-tech" style="display:flex; flex-wrap:wrap; gap:4px; margin-top:4px;">
+                            ${proj.techStack.map(t => `<span class="res-item-tag" style="font-size:10px; background:#f0f0f0; padding:2px 6px; border-radius:4px;">${t}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('')}
+        </div>
+    `;
 }
 
 function switchTemplate(template) {
@@ -309,6 +354,189 @@ function copyAsText() {
     });
 }
 
+// --- SKILLS LOGIC ---
+function handleSkillInput(event, category) {
+    if (event.key === 'Enter' && event.target.value.trim()) {
+        addSkill(category, event.target.value.trim());
+        event.target.value = '';
+    }
+}
+
+function addSkill(category, name) {
+    if (!state.resume.skills[category].includes(name)) {
+        state.resume.skills[category].push(name);
+        saveState();
+        renderSkillsTags();
+        renderResume();
+        renderATSScore();
+    }
+}
+
+function removeSkill(category, index) {
+    state.resume.skills[category].splice(index, 1);
+    saveState();
+    renderSkillsTags();
+    renderResume();
+    renderATSScore();
+}
+
+function renderSkillsTags() {
+    const categories = ['technical', 'soft', 'tools'];
+    categories.forEach(cat => {
+        const container = document.getElementById(`${cat}-skills-tags`);
+        const catLabelId = cat === 'technical' ? 'tech' : cat === 'soft' ? 'soft' : 'tools';
+        const label = document.getElementById(`label-${catLabelId}-skills`);
+        if (!container) return;
+
+        const skills = state.resume.skills[cat] || [];
+        const labelNames = { technical: 'Technical Skills', soft: 'Soft Skills', tools: 'Tools & Technologies' };
+        if (label) label.innerText = `${labelNames[cat]} (${skills.length})`;
+
+        container.innerHTML = skills.map((s, i) => `
+            <div class="tag-chip">
+                ${s}
+                <button onclick="removeSkill('${cat}', ${i})">&times;</button>
+            </div>
+        `).join('');
+    });
+}
+
+function suggestSkills(btn) {
+    btn.classList.add('loading');
+    btn.innerText = "Suggesting...";
+
+    setTimeout(() => {
+        const suggestions = {
+            technical: ["TypeScript", "React", "Node.js", "PostgreSQL", "GraphQL"],
+            soft: ["Team Leadership", "Problem Solving"],
+            tools: ["Git", "Docker", "AWS"]
+        };
+
+        Object.keys(suggestions).forEach(cat => {
+            suggestions[cat].forEach(s => {
+                if (!state.resume.skills[cat].includes(s)) {
+                    state.resume.skills[cat].push(s);
+                }
+            });
+        });
+
+        saveState();
+        renderSkillsTags();
+        renderResume();
+        renderATSScore();
+
+        btn.classList.remove('loading');
+        btn.innerText = "✨ Suggest Skills";
+    }, 1000);
+}
+
+// --- PROJECTS LOGIC ---
+function addProjectEntry() {
+    state.resume.projects.push({
+        title: '',
+        desc: '',
+        techStack: [],
+        liveUrl: '',
+        githubUrl: ''
+    });
+    state.activeProjectIndex = state.resume.projects.length - 1;
+    saveState();
+    renderProjectsForm();
+    renderResume();
+}
+
+function toggleProjectAccordion(index) {
+    state.activeProjectIndex = state.activeProjectIndex === index ? null : index;
+    renderProjectsForm();
+}
+
+function updateProjectField(index, field, value) {
+    state.resume.projects[index][field] = value;
+    saveState();
+    renderResume();
+    renderATSScore();
+}
+
+function handleProjectTechInput(event, index) {
+    if (event.key === 'Enter' && event.target.value.trim()) {
+        const tech = event.target.value.trim();
+        if (!state.resume.projects[index].techStack.includes(tech)) {
+            state.resume.projects[index].techStack.push(tech);
+            saveState();
+            renderProjectsForm();
+            renderResume();
+        }
+        event.target.value = '';
+    }
+}
+
+function removeProjectTech(pIndex, tIndex) {
+    state.resume.projects[pIndex].techStack.splice(tIndex, 1);
+    saveState();
+    renderProjectsForm();
+    renderResume();
+}
+
+function removeProjectEntry(index, event) {
+    if (event) event.stopPropagation();
+    state.resume.projects.splice(index, 1);
+    if (state.activeProjectIndex === index) state.activeProjectIndex = null;
+    saveState();
+    renderProjectsForm();
+    renderResume();
+    renderATSScore();
+}
+
+function renderProjectsForm() {
+    const list = document.getElementById('projects-form-list');
+    if (!list) return;
+
+    list.innerHTML = state.resume.projects.map((proj, i) => `
+        <div class="accordion-item ${state.activeProjectIndex === i ? 'active' : ''}">
+            <div class="accordion-header" onclick="toggleProjectAccordion(${i})">
+                <span>${proj.title || 'New Project'}</span>
+                <div style="display:flex; gap:12px; align-items:center;">
+                    <i class="fas fa-chevron-down" style="font-size:10px;"></i>
+                    <button onclick="removeProjectEntry(${i}, event)" style="background:none; border:none; color:red; cursor:pointer; font-size:10px;">Delete</button>
+                </div>
+            </div>
+            <div class="accordion-content">
+                <div class="form-group">
+                    <label class="input-label">Project Title</label>
+                    <input type="text" class="form-control" value="${proj.title}" oninput="updateProjectField(${i}, 'title', this.value)">
+                </div>
+                <div class="form-group">
+                    <label class="input-label">Description (Max 200 chars)</label>
+                    <textarea class="form-control" maxlength="200" oninput="updateProjectField(${i}, 'desc', this.value); document.getElementById('char-count-${i}').innerText = this.value.length + '/200'">${proj.desc}</textarea>
+                    <div id="char-count-${i}" class="char-counter">${(proj.desc || '').length}/200</div>
+                </div>
+                <div class="form-group">
+                    <label class="input-label">Tech Stack (Enter to add)</label>
+                    <div class="tag-input-container">
+                        <div class="tag-chips">
+                            ${(proj.techStack || []).map((t, ti) => `
+                                <div class="tag-chip">
+                                    ${t}
+                                    <button onclick="removeProjectTech(${i}, ${ti})">&times;</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <input type="text" class="tag-input" placeholder="React, CSS..." onkeydown="handleProjectTechInput(event, ${i})">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="input-label">Live URL</label>
+                    <input type="text" class="form-control" value="${proj.liveUrl || ''}" oninput="updateProjectField(${i}, 'liveUrl', this.value)">
+                </div>
+                <div class="form-group">
+                    <label class="input-label">GitHub URL</label>
+                    <input type="text" class="form-control" value="${proj.githubUrl || ''}" oninput="updateProjectField(${i}, 'githubUrl', this.value)">
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
 // --- ATS SCORING & IMPROVEMENTS ---
 function calculateATSScore() {
     let score = 0;
@@ -339,11 +567,12 @@ function calculateATSScore() {
     }
 
     // 4. Skills list has >= 8 items
-    const skills = resume.skills ? resume.skills.split(',').map(s => s.trim()).filter(s => s) : [];
-    if (skills.length >= 8) {
+    const s = resume.skills;
+    const totalSkills = s.technical.length + s.soft.length + s.tools.length;
+    if (totalSkills >= 8) {
         score += 10;
     } else {
-        improvements.push("Add more skills (target 8+).");
+        improvements.push("Add more skills (target 8+ keywords).");
     }
 
     // 5. GitHub or LinkedIn exists
@@ -399,10 +628,6 @@ function addEntry(type) {
         entry.school = '';
         entry.degree = '';
         entry.year = '';
-    } else if (type === 'projects') {
-        entry.title = '';
-        entry.desc = '';
-        entry.link = '';
     }
 
     state.resume[type].push(entry);
@@ -481,16 +706,17 @@ function loadSampleData() {
             { school: 'Indian Institute of Technology', degree: 'B.Tech Computer Science', year: '2023' }
         ],
         projects: [
-            { title: 'AI Build Tracker', link: 'github.com/zain/ai-build', desc: 'A real-time project management tool with AI artifact verification.' }
+            { title: 'AI Resume Builder', desc: 'A real-time resume builder with ATS scoring and professional templates.', techStack: ['React', 'JavaScript', 'CSS'], liveUrl: '#', githubUrl: 'https://github.com/zain-146/AI-resume-builder' }
         ],
-        skills: 'JavaScript, React, Tailwind CSS, Node.js, Git, Figma'
+        skills: {
+            technical: ['JavaScript', 'React', 'Node.js', 'TypeScript'],
+            soft: ['Problem Solving', 'Teamwork'],
+            tools: ['Git', 'VS Code', 'Docker']
+        }
     };
 
     saveState();
     syncInputsFromState();
-    renderFormEntries('experience');
-    renderFormEntries('education');
-    renderFormEntries('projects');
     renderResume();
     renderATSScore();
 }
