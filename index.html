@@ -343,12 +343,67 @@
 
         <!-- PROOF PAGE -->
         <div id="page-proof" class="page">
-            <div class="hero">
-                <h1>Proof of Artifacts</h1>
-                <p class="subtext">Verification of builds and documentation.</p>
-                <div class="proof-card" style="margin-top: 32px;">
-                    <i class="fas fa-microchip" style="font-size: 48px; margin-bottom: 24px;"></i>
-                    <p>Artifact collection protocol active. Link your Lovable/GitHub repos here upon completion.</p>
+            <div class="proof-layout">
+                <div class="proof-header">
+                    <h1>Proof of Build</h1>
+                    <div id="ship-status-badge" class="status-badge status-in-progress">In Progress</div>
+                </div>
+
+                <div class="proof-grid">
+                    <!-- Steps Checklist -->
+                    <div class="proof-card-premium">
+                        <h3>Build Steps Completion</h3>
+                        <div id="steps-overview-list" class="status-list">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Test Checklist -->
+                    <div class="proof-card-premium">
+                        <h3>Test Verification</h3>
+                        <div id="tests-overview-list" class="status-list">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Artifact Links -->
+                    <div class="proof-card-premium artifact-collection">
+                        <h3>Artifact Link Collection</h3>
+                        <div class="form-group">
+                            <label class="input-label">Lovable Project Link</label>
+                            <input type="url" id="proof-lovable" class="form-control"
+                                placeholder="https://lovable.dev/..." oninput="updateProofData('lovable', this.value)">
+                            <div class="validation-msg" id="val-lovable"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="input-label">GitHub Repository Link</label>
+                            <input type="url" id="proof-github" class="form-control"
+                                placeholder="https://github.com/..." oninput="updateProofData('github', this.value)">
+                            <div class="validation-msg" id="val-github"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="input-label">Deployed URL</label>
+                            <input type="url" id="proof-deploy" class="form-control" placeholder="https://..."
+                                oninput="updateProofData('deploy', this.value)">
+                            <div class="validation-msg" id="val-deploy"></div>
+                        </div>
+                    </div>
+
+                    <!-- Final Submission -->
+                    <div class="proof-card-premium submission-section">
+                        <h3>Final Submission</h3>
+                        <p class="text-small" style="margin-bottom: 20px;">Ensure all steps are complete and links are
+                            valid to ship the project.</p>
+                        <button class="btn btn-primary" id="copy-submission-btn" onclick="copyFinalSubmission()"
+                            style="width: 100%;">
+                            <i class="fas fa-copy" style="margin-right: 8px;"></i> Copy Final Submission
+                        </button>
+
+                        <div id="ship-success-msg" class="ship-success-banner" style="display: none;">
+                            <i class="fas fa-circle-check"></i>
+                            <span>Project 3 Shipped Successfully.</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
