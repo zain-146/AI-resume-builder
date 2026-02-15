@@ -1,32 +1,247 @@
-/* AI Resume Builder - Premium Design System */
-
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Inter:wght@400;500;600&display=swap');
-
+/* ACCENT COLOR SYSTEM */
 :root {
-    /* STRICT COLOR SYSTEM */
-    --color-bg: #F7F6F3;
-    --color-text-primary: #111111;
-    --color-accent: #000000;
-    --color-white: #ffffff;
-    --color-border: #e0e0e0;
-    --color-text-muted: #666666;
-
-    /* TYPOGRAPHY */
-    --font-serif: 'Merriweather', serif;
-    --font-sans: 'Inter', sans-serif;
-    --font-size-body: 16px;
-    --line-height-body: 1.6;
-
-    /* SPACING SYSTEM */
-    --space-1: 8px;
-    --space-2: 16px;
-    --space-3: 24px;
-    --space-4: 40px;
-    --space-5: 64px;
-
-    --radius: 2px;
-    --transition: 150ms ease-in-out;
+    --resume-accent-color: hsl(168, 60%, 40%);
+    /* Default Teal */
 }
+
+/* CUSTOMIZATION UI */
+.customization-container {
+    background: var(--color-white);
+    padding: var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    margin-bottom: var(--space-3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.picker-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.template-picker {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.template-card {
+    width: 120px;
+    cursor: pointer;
+    position: relative;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    padding: 4px;
+    transition: all var(--transition);
+    text-align: center;
+}
+
+.template-card:hover {
+    background: var(--color-bg);
+}
+
+.template-card.active {
+    border-color: #3b82f6;
+    /* Blue border for active */
+    background: var(--color-bg);
+}
+
+.template-sketch {
+    width: 100%;
+    height: 80px;
+    background: #f0f0f0;
+    border-radius: 2px;
+    margin-bottom: 8px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+}
+
+.template-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.template-card .checkmark {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    color: #3b82f6;
+    background: white;
+    border-radius: 50%;
+    display: none;
+    font-size: 16px;
+}
+
+.template-card.active .checkmark {
+    display: block;
+}
+
+/* Sketch Details */
+.sketch-classic::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    height: 4px;
+    background: #ccc;
+}
+
+.sketch-classic::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    background: repeating-linear-gradient(#eee 0, #eee 2px, transparent 2px, transparent 6px);
+}
+
+.sketch-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30%;
+    height: 100%;
+    background: #ddd;
+}
+
+.sketch-modern::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 35%;
+    right: 10px;
+    bottom: 10px;
+    background: repeating-linear-gradient(#eee 0, #eee 2px, transparent 2px, transparent 6px);
+}
+
+.sketch-minimal::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    background: repeating-linear-gradient(#eee 0, #eee 2px, transparent 2px, transparent 6px);
+}
+
+/* Color Picker */
+.color-picker {
+    display: flex;
+    gap: 12px;
+}
+
+.color-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 0 1px var(--color-border);
+    cursor: pointer;
+    transition: transform var(--transition);
+    padding: 0;
+}
+
+.color-circle:hover {
+    transform: scale(1.1);
+}
+
+.color-circle.active {
+    box-shadow: 0 0 0 2px white, 0 0 0 4px #3b82f6;
+    transform: scale(1.1);
+}
+
+/* TOAST */
+.toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: #333;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+}
+
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* UPDATING RESUME STYLES TO USE ACCENT COLOR */
+.res-header {
+    border-bottom-color: var(--resume-accent-color) !important;
+}
+
+.template-modern .res-header {
+    border-bottom-color: var(--resume-accent-color) !important;
+}
+
+.template-modern .res-section-title {
+    background: var(--resume-accent-color) !important;
+}
+
+.template-modern .res-sidebar {
+    background: color-mix(in srgb, var(--resume-accent-color), white 90%);
+}
+
+.res-section-title {
+    color: var(--resume-accent-color);
+}
+
+.res-proj-links a {
+    color: var(--resume-accent-color) !important;
+}
+
+.tag-chip {
+    background: var(--resume-accent-color) !important;
+}
+
+/* Template Specific Overrides */
+.template-classic .res-name {
+    font-family: var(--font-serif);
+}
+
+.template-classic .res-section-title {
+    font-family: var(--font-serif);
+    border-bottom: 2px solid var(--resume-accent-color);
+    text-align: center;
+}
+
+.template-minimal {
+    --font-serif: var(--font-sans);
+}
+
+.template-minimal .res-header {
+    border: none;
+    text-align: center;
+}
+
+.template-minimal .res-section-title {
+    border: none;
+    text-align: left;
+    background: transparent;
+    color: var(--resume-accent-color);
+    padding: 0;
+    margin-bottom: 4px;
+}
+
+.template-minimal .res-item-header {
+    border-bottom: 1px solid #eee;
+    margin-bottom: 4px;
+}
+
+/* ... existing styles below ... */
 
 * {
     box-sizing: border-box;

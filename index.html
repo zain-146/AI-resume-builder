@@ -173,6 +173,51 @@
 
                 <!-- PREVIEW SECTION -->
                 <div class="preview-panel">
+                    <!-- CUSTOMIZATION PICKERS -->
+                    <div class="customization-container no-print">
+                        <div class="picker-section">
+                            <label class="input-label">Select Template</label>
+                            <div class="template-picker">
+                                <div class="template-card" onclick="switchTemplate('classic')" data-template="classic">
+                                    <div class="template-sketch sketch-classic"></div>
+                                    <span class="template-label">Classic</span>
+                                    <i class="fas fa-check-circle checkmark"></i>
+                                </div>
+                                <div class="template-card" onclick="switchTemplate('modern')" data-template="modern">
+                                    <div class="template-sketch sketch-modern"></div>
+                                    <span class="template-label">Modern</span>
+                                    <i class="fas fa-check-circle checkmark"></i>
+                                </div>
+                                <div class="template-card" onclick="switchTemplate('minimal')" data-template="minimal">
+                                    <div class="template-sketch sketch-minimal"></div>
+                                    <span class="template-label">Minimal</span>
+                                    <i class="fas fa-check-circle checkmark"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="picker-section" style="margin-top: 20px;">
+                            <label class="input-label">Accent Color</label>
+                            <div class="color-picker">
+                                <button class="color-circle" style="background: hsl(168, 60%, 40%);"
+                                    onclick="switchColor('hsl(168, 60%, 40%)')" data-color="hsl(168, 60%, 40%)"
+                                    title="Teal"></button>
+                                <button class="color-circle" style="background: hsl(220, 60%, 35%);"
+                                    onclick="switchColor('hsl(220, 60%, 35%)')" data-color="hsl(220, 60%, 35%)"
+                                    title="Navy"></button>
+                                <button class="color-circle" style="background: hsl(345, 60%, 35%);"
+                                    onclick="switchColor('hsl(345, 60%, 35%)')" data-color="hsl(345, 60%, 35%)"
+                                    title="Burgundy"></button>
+                                <button class="color-circle" style="background: hsl(150, 50%, 30%);"
+                                    onclick="switchColor('hsl(150, 50%, 30%)')" data-color="hsl(150, 50%, 30%)"
+                                    title="Forest"></button>
+                                <button class="color-circle" style="background: hsl(0, 0%, 25%);"
+                                    onclick="switchColor('hsl(0, 0%, 25%)')" data-color="hsl(0, 0%, 25%)"
+                                    title="Charcoal"></button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- ATS Score Section -->
                     <div class="ats-card">
                         <div class="ats-header">
@@ -201,13 +246,56 @@
         <div id="page-preview" class="page">
             <div style="text-align: center; margin-bottom: 32px;">
                 <h2>Final Preview</h2>
-                <div class="template-tabs" style="justify-content: center; margin-bottom: 16px;">
-                    <button class="template-tab active" data-template-btn="classic"
-                        onclick="switchTemplate('classic')">Classic</button>
-                    <button class="template-tab" data-template-btn="modern"
-                        onclick="switchTemplate('modern')">Modern</button>
-                    <button class="template-tab" data-template-btn="minimal"
-                        onclick="switchTemplate('minimal')">Minimal</button>
+                <div class="customization-container no-print"
+                    style="max-width: 600px; margin: 0 auto 24px; box-shadow: none; border: 1px solid var(--color-border);">
+                    <div
+                        style="display: flex; gap: 40px; justify-content: center; align-items: flex-start; padding: 12px;">
+                        <div class="picker-section">
+                            <label class="input-label">Template</label>
+                            <div class="template-picker" style="gap: 12px;">
+                                <div class="template-card" onclick="switchTemplate('classic')" data-template="classic"
+                                    style="width: 80px;">
+                                    <div class="template-sketch sketch-classic" style="height: 50px;"></div>
+                                    <span class="template-label" style="font-size: 10px;">Classic</span>
+                                </div>
+                                <div class="template-card" onclick="switchTemplate('modern')" data-template="modern"
+                                    style="width: 80px;">
+                                    <div class="template-sketch sketch-modern" style="height: 50px;"></div>
+                                    <span class="template-label" style="font-size: 10px;">Modern</span>
+                                </div>
+                                <div class="template-card" onclick="switchTemplate('minimal')" data-template="minimal"
+                                    style="width: 80px;">
+                                    <div class="template-sketch sketch-minimal" style="height: 50px;"></div>
+                                    <span class="template-label" style="font-size: 10px;">Minimal</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="picker-section">
+                            <label class="input-label">Theme</label>
+                            <div class="color-picker" style="margin-top: 8px;">
+                                <button class="color-circle"
+                                    style="background: hsl(168, 60%, 40%); width: 24px; height: 24px;"
+                                    onclick="switchColor('hsl(168, 60%, 40%)')"
+                                    data-color="hsl(168, 60%, 40%)"></button>
+                                <button class="color-circle"
+                                    style="background: hsl(220, 60%, 35%); width: 24px; height: 24px;"
+                                    onclick="switchColor('hsl(220, 60%, 35%)')"
+                                    data-color="hsl(220, 60%, 35%)"></button>
+                                <button class="color-circle"
+                                    style="background: hsl(345, 60%, 35%); width: 24px; height: 24px;"
+                                    onclick="switchColor('hsl(345, 60%, 35%)')"
+                                    data-color="hsl(345, 60%, 35%)"></button>
+                                <button class="color-circle"
+                                    style="background: hsl(150, 50%, 30%); width: 24px; height: 24px;"
+                                    onclick="switchColor('hsl(150, 50%, 30%)')"
+                                    data-color="hsl(150, 50%, 30%)"></button>
+                                <button class="color-circle"
+                                    style="background: hsl(0, 0%, 25%); width: 24px; height: 24px;"
+                                    onclick="switchColor('hsl(0, 0%, 25%)')" data-color="hsl(0, 0%, 25%)"></button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <p class="text-small">Clean, minimal, ATS-ready layout.</p>
                 <div style="margin-top: 16px; display: flex; gap: 12px; justify-content: center;" class="no-print">
@@ -240,6 +328,8 @@
                 </div>
             </div>
         </div>
+
+        <div id="toast" class="toast">PDF export ready! Check your downloads.</div>
 
     </main>
 

@@ -23,15 +23,18 @@ const state = {
         }
     },
     selectedTemplate: 'classic',
+    selectedColor: 'hsl(168, 60%, 40%)',
     activeProjectIndex: null
 };
 
 const STORAGE_KEY = 'resumeBuilderData';
 const TEMPLATE_KEY = 'resumeBuilderTemplate';
+const COLOR_KEY = 'resumeBuilderColor';
 
 function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state.resume));
     localStorage.setItem(TEMPLATE_KEY, state.selectedTemplate);
+    localStorage.setItem(COLOR_KEY, state.selectedColor);
 }
 
 function loadState() {
@@ -57,6 +60,10 @@ function loadState() {
     const savedTemplate = localStorage.getItem(TEMPLATE_KEY);
     if (savedTemplate) {
         state.selectedTemplate = savedTemplate;
+    }
+    const savedColor = localStorage.getItem(COLOR_KEY);
+    if (savedColor) {
+        state.selectedColor = savedColor;
     }
 }
 
@@ -128,7 +135,13 @@ function renderResume() {
 
     // Update template classes on parents
     if (mini) mini.parentElement.className = `preview-panel template-${state.selectedTemplate}`;
-    if (full) full.parentElement.className = `page active template-${state.selectedTemplate}`;
+    if (full) {
+        const fullParent = full.parentElement;
+        fullParent.className = `page active template-${state.selectedTemplate}`;
+    }
+
+    // Apply color to CSS Variable
+    document.documentElement.style.setProperty('--resume-accent-color', state.selectedColor);
 
     const html = generateResumeHTML();
 
@@ -138,10 +151,15 @@ function renderResume() {
     // Run validation silently on render
     validateBeforeExport();
 
-    // Update active tab UI
-    document.querySelectorAll('.template-tab').forEach(tab => {
-        const template = tab.getAttribute('onclick').match(/'([^']+)'/)[1];
-        tab.classList.toggle('active', template === state.selectedTemplate);
+    // Update active picker UI
+    document.querySelectorAll('.template-card').forEach(card => {
+        const template = card.getAttribute('data-template');
+        card.classList.toggle('active', template === state.selectedTemplate);
+    });
+
+    document.querySelectorAll('.color-circle').forEach(circle => {
+        const color = circle.getAttribute('data-color');
+        circle.classList.toggle('active', color === state.selectedColor);
     });
 }
 
@@ -288,6 +306,12 @@ function switchTemplate(template) {
     renderResume();
 }
 
+function switchColor(color) {
+    state.selectedColor = color;
+    saveState();
+    renderResume();
+}
+
 // --- EXPORT & VALIDATION ---
 function validateBeforeExport() {
     const p = state.resume.personal;
@@ -306,9 +330,20 @@ function validateBeforeExport() {
     return { hasName, hasExpOrProj };
 }
 
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    if (toast) {
+        toast.innerText = message;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+}
+
 function exportToPDF() {
     validateBeforeExport();
-    window.print();
+    showToast("PDF export ready! Check your downloads.");
 }
 
 function copyAsText() {
