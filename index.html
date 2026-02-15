@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Builder | KodNest Premium</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <nav class="top-nav">
+        <div class="brand" style="font-family: var(--font-serif); font-weight: 700; font-size: 1.2rem;">AI Resume
+            Builder</div>
+        <ul class="nav-links">
+            <li><a href="#/" class="nav-link" data-route="home">Home</a></li>
+            <li><a href="#/builder" class="nav-link" data-route="builder">Builder</a></li>
+            <li><a href="#/preview" class="nav-link" data-route="preview">Preview</a></li>
+            <li><a href="#/proof" class="nav-link" data-route="proof">Proof</a></li>
+        </ul>
+    </nav>
+
+    <main class="page-container" id="app">
+
+        <!-- HOME PAGE -->
+        <div id="page-home" class="page active">
+            <section class="hero">
+                <h1>Build a Resume That Gets Read.</h1>
+                <p class="subtext">Precision-engineered resumes for the modern job market.</p>
+                <div style="margin-top: 32px;">
+                    <a href="#/builder" class="btn btn-primary">Start Building</a>
+                </div>
+            </section>
+        </div>
+
+        <!-- BUILDER PAGE -->
+        <div id="page-builder" class="page">
+            <div class="builder-layout">
+                <!-- FORM SECTION -->
+                <div class="form-workspace">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h2>Resume Editor</h2>
+                        <button class="btn btn-secondary" onclick="loadSampleData()"
+                            style="padding: 8px 16px; font-size: 12px;">Load Sample Data</button>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Personal Information</h3>
+                        <div class="form-group">
+                            <label class="input-label">Full Name</label>
+                            <input type="text" class="form-control" data-field="personal.name" placeholder="John Doe">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label class="input-label">Email</label>
+                                <input type="email" class="form-control" data-field="personal.email"
+                                    placeholder="john@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label class="input-label">Phone</label>
+                                <input type="text" class="form-control" data-field="personal.phone"
+                                    placeholder="+91 98765 43210">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="input-label">Location</label>
+                            <input type="text" class="form-control" data-field="personal.location"
+                                placeholder="Bangalore, India">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label class="input-label">GitHub</label>
+                                <input type="text" class="form-control" data-field="personal.github"
+                                    placeholder="github.com/johndoe">
+                            </div>
+                            <div class="form-group">
+                                <label class="input-label">LinkedIn</label>
+                                <input type="text" class="form-control" data-field="personal.linkedin"
+                                    placeholder="linkedin.com/in/johndoe">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Professional Summary</h3>
+                        <div class="form-group">
+                            <label class="input-label">Write a brief overview of your career</label>
+                            <textarea class="form-control" data-field="personal.summary" style="height: 100px;"
+                                placeholder="Experienced Software Engineer with a focus on..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3>Experience</h3>
+                            <button class="btn btn-secondary" style="padding: 4px 12px; font-size: 11px;">+ Add</button>
+                        </div>
+                        <div id="experience-list">
+                            <!-- Dynamic items -->
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3>Education</h3>
+                            <button class="btn btn-secondary" style="padding: 4px 12px; font-size: 11px;">+ Add</button>
+                        </div>
+                        <div id="education-list">
+                            <!-- Dynamic items -->
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3>Projects</h3>
+                            <button class="btn btn-secondary" style="padding: 4px 12px; font-size: 11px;">+ Add</button>
+                        </div>
+                        <div id="projects-list">
+                            <!-- Dynamic items -->
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Skills</h3>
+                        <div class="form-group">
+                            <label class="input-label">Comma separated skills</label>
+                            <input type="text" class="form-control" data-field="skills"
+                                placeholder="React, Node.js, TypeScript, AWS">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PREVIEW SECTION -->
+                <div class="preview-panel">
+                    <div class="resume-paper" id="mini-preview">
+                        <!-- Content synced via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FULL PREVIEW PAGE -->
+        <div id="page-preview" class="page">
+            <div style="text-align: center; margin-bottom: 32px;">
+                <h2>Final Preview</h2>
+                <p class="text-small">Clean, minimal, ATS-ready layout.</p>
+            </div>
+            <div class="resume-paper resume-paper-clean" id="full-preview">
+                <!-- Content synced via JS -->
+            </div>
+        </div>
+
+        <!-- PROOF PAGE -->
+        <div id="page-proof" class="page">
+            <div class="hero">
+                <h1>Proof of Artifacts</h1>
+                <p class="subtext">Verification of builds and documentation.</p>
+                <div class="proof-card" style="margin-top: 32px;">
+                    <i class="fas fa-microchip" style="font-size: 48px; margin-bottom: 24px;"></i>
+                    <p>Artifact collection protocol active. Link your Lovable/GitHub repos here upon completion.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
