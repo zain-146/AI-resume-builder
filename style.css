@@ -506,6 +506,91 @@ p {
     color: var(--color-accent);
 }
 
+/* Validation Warning */
+.validation-warning {
+    margin: 16px auto;
+    padding: 12px;
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: var(--radius);
+    color: #795548;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 500px;
+}
+
+.validation-warning i {
+    color: #ffa000;
+}
+
+/* PRINT STYLING */
+@media print {
+
+    .top-nav,
+    .no-print,
+    .template-tabs,
+    .ats-card,
+    .btn,
+    .nav-links,
+    .builder-layout> :first-child {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+        margin: 0;
+        padding: 0;
+    }
+
+    .page-container {
+        padding: 0 !important;
+    }
+
+    .page {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        animation: none !important;
+    }
+
+    #page-preview {
+        padding: 0 !important;
+    }
+
+    #page-preview h2,
+    #page-preview p {
+        display: none !important;
+    }
+
+    .resume-paper {
+        border: none !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        aspect-ratio: auto !important;
+    }
+
+    .resume-paper-clean {
+        max-width: none !important;
+        border: none !important;
+    }
+
+    /* Prevent splitting sections across pages */
+    .res-section {
+        page-break-inside: avoid;
+    }
+
+    /* Force black text for print */
+    * {
+        color: black !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
 /* Proof Page */
 .proof-card {
     background: var(--color-white);

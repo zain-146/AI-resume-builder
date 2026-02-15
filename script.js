@@ -114,6 +114,9 @@ function renderResume() {
     if (mini) mini.innerHTML = html;
     if (full) full.innerHTML = html;
 
+    // Run validation silently on render
+    validateBeforeExport();
+
     // Update active tab UI
     document.querySelectorAll('.template-tab').forEach(tab => {
         const template = tab.getAttribute('onclick').match(/'([^']+)'/)[1];
@@ -238,6 +241,72 @@ function switchTemplate(template) {
     state.selectedTemplate = template;
     saveState();
     renderResume();
+}
+
+// --- EXPORT & VALIDATION ---
+function validateBeforeExport() {
+    const p = state.resume.personal;
+    const warning = document.getElementById('validation-warning');
+
+    const hasName = p.name && p.name.trim().length > 0;
+    const hasExpOrProj = state.resume.experience.length > 0 || state.resume.projects.length > 0;
+
+    if (warning) {
+        if (!hasName || !hasExpOrProj) {
+            warning.style.display = 'flex';
+        } else {
+            warning.style.display = 'none';
+        }
+    }
+    return { hasName, hasExpOrProj };
+}
+
+function exportToPDF() {
+    validateBeforeExport();
+    window.print();
+}
+
+function copyAsText() {
+    validateBeforeExport();
+    const r = state.resume;
+    const p = r.personal;
+
+    let text = `${p.name || 'Your Name'}\n`;
+    text += `${p.email || 'email@example.com'} | ${p.phone || '+91 00000 00000'} | ${p.location || 'Location'}\n`;
+    if (p.github) text += `GitHub: ${p.github}\n`;
+    if (p.linkedin) text += `LinkedIn: ${p.linkedin}\n`;
+    text += `\nSUMMARY\n${p.summary || 'Summary not provided'}\n`;
+
+    if (r.education.length > 0) {
+        text += `\nEDUCATION\n`;
+        r.education.forEach(edu => {
+            text += `${edu.degree} | ${edu.school} | ${edu.year}\n`;
+        });
+    }
+
+    if (r.experience.length > 0) {
+        text += `\nEXPERIENCE\n`;
+        r.experience.forEach(exp => {
+            text += `${exp.role} | ${exp.company} | ${exp.duration}\n${exp.desc}\n`;
+        });
+    }
+
+    if (r.projects.length > 0) {
+        text += `\nPROJECTS\n`;
+        r.projects.forEach(proj => {
+            text += `${proj.title} | ${proj.link}\n${proj.desc}\n`;
+        });
+    }
+
+    if (r.skills) {
+        text += `\nSKILLS\n${r.skills}\n`;
+    }
+
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Resume copied to clipboard as plain text!');
+    }).catch(err => {
+        console.error('Failed to copy text: ', err);
+    });
 }
 
 // --- ATS SCORING & IMPROVEMENTS ---

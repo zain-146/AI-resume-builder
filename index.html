@@ -180,6 +180,19 @@
                         onclick="switchTemplate('minimal')">Minimal</button>
                 </div>
                 <p class="text-small">Clean, minimal, ATS-ready layout.</p>
+                <div style="margin-top: 16px; display: flex; gap: 12px; justify-content: center;" class="no-print">
+                    <button class="btn btn-primary" onclick="exportToPDF()">
+                        <i class="fas fa-file-pdf" style="margin-right: 8px;"></i> Print / Save as PDF
+                    </button>
+                    <button class="btn btn-secondary" onclick="copyAsText()">
+                        <i class="fas fa-copy" style="margin-right: 8px;"></i> Copy Resume as Text
+                    </button>
+                </div>
+                <div id="validation-warning" class="validation-warning no-print" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Your resume may look incomplete. Please add your name and at least one experience or
+                        project.</span>
+                </div>
             </div>
             <div class="resume-paper resume-paper-clean" id="full-preview">
                 <!-- Content synced via JS -->
