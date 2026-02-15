@@ -180,6 +180,22 @@ p {
 
 .form-group {
     margin-bottom: var(--space-2);
+    position: relative;
+}
+
+.guidance-hint {
+    font-size: 10px;
+    color: var(--color-text-muted);
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-style: italic;
+}
+
+.guidance-hint::before {
+    content: '→';
+    color: var(--color-accent);
 }
 
 .input-label {
@@ -239,6 +255,35 @@ p {
 
 .btn-secondary:hover {
     background: rgba(0, 0, 0, 0.05);
+}
+
+/* Template Tabs */
+.template-tabs {
+    display: flex;
+    gap: 8px;
+    background: var(--color-bg);
+    padding: 4px;
+    border-radius: var(--radius);
+}
+
+.template-tab {
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: var(--radius);
+    transition: all var(--transition);
+}
+
+.template-tab:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.template-tab.active {
+    background: var(--color-white);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* Dynamic Entry List */
@@ -331,6 +376,68 @@ p {
     font-size: 12px;
 }
 
+/* TEMPLATES */
+.template-modern .resume-paper {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 0;
+    padding: 0;
+}
+
+.template-modern .res-header {
+    grid-column: 1 / -1;
+    padding: var(--space-4);
+    border-bottom: 4px solid var(--color-accent);
+    text-align: left;
+}
+
+.template-modern .res-sidebar {
+    background: var(--color-bg);
+    padding: var(--space-3);
+    border-right: 1px solid var(--color-border);
+}
+
+.template-modern .res-main {
+    padding: var(--space-3);
+}
+
+.template-modern .res-section {
+    margin-bottom: var(--space-2);
+}
+
+.template-modern .res-section-title {
+    background: var(--color-accent);
+    color: var(--color-white);
+    padding: 4px 8px;
+    border: none;
+}
+
+/* Minimal Template */
+.template-minimal .resume-paper {
+    padding: var(--space-5);
+    font-family: var(--font-sans);
+}
+
+.template-minimal .res-header {
+    border-bottom: none;
+    margin-bottom: var(--space-4);
+}
+
+.template-minimal .res-name {
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+}
+
+.template-minimal .res-section-title {
+    text-align: center;
+    border-bottom: 1px solid var(--color-text-muted);
+    font-weight: 400;
+    letter-spacing: 0.1em;
+}
+
+/* Classic is the default styling already present */
+
 /* ATS SCORING UI */
 .ats-card {
     background: var(--color-white);
@@ -373,6 +480,11 @@ p {
     height: 100%;
     background: var(--color-accent);
     transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.improvements-panel {
+    border-top: 1px solid var(--color-bg);
+    padding-top: var(--space-2);
 }
 
 .ats-suggestions {

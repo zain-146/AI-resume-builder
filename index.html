@@ -43,6 +43,11 @@
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                         <h2>Resume Editor</h2>
+                        <div class="template-tabs">
+                            <button class="template-tab active" onclick="switchTemplate('classic')">Classic</button>
+                            <button class="template-tab" onclick="switchTemplate('modern')">Modern</button>
+                            <button class="template-tab" onclick="switchTemplate('minimal')">Minimal</button>
+                        </div>
                         <button class="btn btn-secondary" onclick="loadSampleData()"
                             style="padding: 8px 16px; font-size: 12px;">Load Sample Data</button>
                     </div>
@@ -147,8 +152,11 @@
                         <div class="ats-meter-container">
                             <div class="ats-meter-bar" id="ats-meter-fill" style="width: 0%;"></div>
                         </div>
-                        <div id="ats-suggestions" class="ats-suggestions">
-                            <!-- Suggestions will be injected here -->
+                        <div class="improvements-panel">
+                            <div class="ats-label" style="margin-bottom: 8px;">Top 3 Improvements</div>
+                            <div id="ats-suggestions" class="ats-suggestions">
+                                <!-- Suggestions will be injected here -->
+                            </div>
                         </div>
                     </div>
 
@@ -163,6 +171,14 @@
         <div id="page-preview" class="page">
             <div style="text-align: center; margin-bottom: 32px;">
                 <h2>Final Preview</h2>
+                <div class="template-tabs" style="justify-content: center; margin-bottom: 16px;">
+                    <button class="template-tab active" data-template-btn="classic"
+                        onclick="switchTemplate('classic')">Classic</button>
+                    <button class="template-tab" data-template-btn="modern"
+                        onclick="switchTemplate('modern')">Modern</button>
+                    <button class="template-tab" data-template-btn="minimal"
+                        onclick="switchTemplate('minimal')">Minimal</button>
+                </div>
                 <p class="text-small">Clean, minimal, ATS-ready layout.</p>
             </div>
             <div class="resume-paper resume-paper-clean" id="full-preview">

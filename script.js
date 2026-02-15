@@ -17,21 +17,27 @@ const state = {
         education: [],
         projects: [],
         skills: ''
-    }
+    },
+    selectedTemplate: 'classic'
 };
 
 const STORAGE_KEY = 'resumeBuilderData';
+const TEMPLATE_KEY = 'resumeBuilderTemplate';
 
 function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state.resume));
+    localStorage.setItem(TEMPLATE_KEY, state.selectedTemplate);
 }
 
 function loadState() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
         state.resume = JSON.parse(saved);
-        // Sync inputs
         syncInputsFromState();
+    }
+    const savedTemplate = localStorage.getItem(TEMPLATE_KEY);
+    if (savedTemplate) {
+        state.selectedTemplate = savedTemplate;
     }
 }
 
@@ -99,16 +105,85 @@ function renderResume() {
     const mini = document.getElementById('mini-preview');
     const full = document.getElementById('full-preview');
 
+    // Update template classes on parents
+    if (mini) mini.parentElement.className = `preview-panel template-${state.selectedTemplate}`;
+    if (full) full.parentElement.className = `page active template-${state.selectedTemplate}`;
+
     const html = generateResumeHTML();
 
     if (mini) mini.innerHTML = html;
     if (full) full.innerHTML = html;
+
+    // Update active tab UI
+    document.querySelectorAll('.template-tab').forEach(tab => {
+        const template = tab.getAttribute('onclick').match(/'([^']+)'/)[1];
+        tab.classList.toggle('active', template === state.selectedTemplate);
+    });
 }
 
 function generateResumeHTML() {
     const p = state.resume.personal;
     const skills = state.resume.skills.split(',').map(s => s.trim()).filter(s => s);
+    const template = state.selectedTemplate;
 
+    if (template === 'modern') {
+        return `
+            <div class="res-header">
+                <div class="res-name">${p.name || 'Your Name'}</div>
+                <div class="res-contact">
+                    ${p.email || 'email@example.com'} | ${p.phone || '+91 00000 00000'} | ${p.location || 'Location'}
+                </div>
+            </div>
+            <div class="res-sidebar">
+                <div class="res-section">
+                    <div class="res-section-title">Contact</div>
+                    <div class="res-item-desc">
+                        ${p.github ? `GitHub: ${p.github}<br>` : ''}
+                        ${p.linkedin ? `LinkedIn: ${p.linkedin}` : ''}
+                    </div>
+                </div>
+                ${skills.length > 0 ? `
+                <div class="res-section">
+                    <div class="res-section-title">Skills</div>
+                    <div class="res-skills">${skills.join('<br>')}</div>
+                </div>
+                ` : ''}
+            </div>
+            <div class="res-main">
+                ${p.summary ? `
+                <div class="res-section">
+                    <div class="res-section-title">Summary</div>
+                    <p class="res-item-desc">${p.summary}</p>
+                </div>
+                ` : ''}
+                ${state.resume.education.length > 0 ? `
+                <div class="res-section">
+                    <div class="res-section-title">Education</div>
+                    ${state.resume.education.map(edu => `
+                        <div class="res-item">
+                            <div class="res-item-header"><span>${edu.degree || 'Degree'}</span></div>
+                            <div class="res-item-sub">${edu.school || 'University'} | ${edu.year || '2020'}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                ` : ''}
+                ${state.resume.experience.length > 0 ? `
+                <div class="res-section">
+                    <div class="res-section-title">Experience</div>
+                    ${state.resume.experience.map(exp => `
+                        <div class="res-item">
+                            <div class="res-item-header"><span>${exp.role || 'Role'}</span></div>
+                            <div class="res-item-sub">${exp.company} | ${exp.duration}</div>
+                            <div class="res-item-desc">${exp.desc}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                ` : ''}
+            </div>
+        `;
+    }
+
+    // Classic / Minimal logic (shared mostly)
     let html = `
         <div class="res-header">
             <div class="res-name">${p.name || 'Your Name'}</div>
@@ -122,101 +197,53 @@ function generateResumeHTML() {
 
     // Summary
     if (p.summary) {
-        html += `
-        <div class="res-section">
-            <div class="res-section-title">Summary</div>
-            <p class="res-item-desc">${p.summary}</p>
-        </div>
-        `;
+        html += `<div class="res-section"><div class="res-section-title">Summary</div><p class="res-item-desc">${p.summary}</p></div>`;
     }
 
     // Education
     if (state.resume.education.length > 0) {
-        html += `
-        <div class="res-section">
-            <div class="res-section-title">Education</div>
-            ${state.resume.education.map(edu => `
-                <div class="res-item">
-                    <div class="res-item-header">
-                        <span>${edu.degree || 'Degree'}</span>
-                        <span>${edu.year || '2020'}</span>
-                    </div>
-                    <div class="res-item-sub">${edu.school || 'University'}</div>
-                </div>
-            `).join('')}
-        </div>
-        `;
+        html += `<div class="res-section"><div class="res-section-title">Education</div>${state.resume.education.map(edu => `
+            <div class="res-item"><div class="res-item-header"><span>${edu.degree || 'Degree'}</span><span>${edu.year || '2020'}</span></div><div class="res-item-sub">${edu.school || 'University'}</div></div>
+        `).join('')}</div>`;
     }
 
     // Experience
     if (state.resume.experience.length > 0) {
-        html += `
-        <div class="res-section">
-            <div class="res-section-title">Experience</div>
-            ${state.resume.experience.map(exp => `
-                <div class="res-item">
-                    <div class="res-item-header">
-                        <span>${exp.role || 'Role'}</span>
-                        <span>${exp.duration || '2022 - Present'}</span>
-                    </div>
-                    <div class="res-item-sub">${exp.company || 'Company'}</div>
-                    <div class="res-item-desc">${exp.desc || 'Description of your responsibilities.'}</div>
-                </div>
-            `).join('')}
-        </div>
-        `;
+        html += `<div class="res-section"><div class="res-section-title">Experience</div>${state.resume.experience.map(exp => `
+            <div class="res-item"><div class="res-item-header"><span>${exp.role || 'Role'}</span><span>${exp.duration || '2022 - Present'}</span></div><div class="res-item-sub">${exp.company || 'Company'}</div><div class="res-item-desc">${exp.desc || ''}</div></div>
+        `).join('')}</div>`;
     }
 
     // Projects
     if (state.resume.projects.length > 0) {
-        html += `
-        <div class="res-section">
-            <div class="res-section-title">Projects</div>
-            ${state.resume.projects.map(proj => `
-                <div class="res-item">
-                    <div class="res-item-header">
-                        <span>${proj.title || 'Project Title'}</span>
-                        <span>${proj.link || ''}</span>
-                    </div>
-                    <div class="res-item-desc">${proj.desc || 'Description of your project work.'}</div>
-                </div>
-            `).join('')}
-        </div>
-        `;
+        html += `<div class="res-section"><div class="res-section-title">Projects</div>${state.resume.projects.map(proj => `
+            <div class="res-item"><div class="res-item-header"><span>${proj.title || 'Project Title'}</span><span>${proj.link || ''}</span></div><div class="res-item-desc">${proj.desc || ''}</div></div>
+        `).join('')}</div>`;
     }
 
     // Skills
     if (skills.length > 0) {
-        html += `
-        <div class="res-section">
-            <div class="res-section-title">Skills</div>
-            <div class="res-skills">
-                ${skills.join(' • ')}
-            </div>
-        </div>
-        `;
+        html += `<div class="res-section"><div class="res-section-title">Skills</div><div class="res-skills">${skills.join(' • ')}</div></div>`;
     }
 
     // Links
     if (p.github || p.linkedin) {
-        html += `
-        <div class="res-section">
-            <div class="res-section-title">Links</div>
-            <div class="res-item-desc">
-                ${p.github ? `<strong>GitHub:</strong> ${p.github}<br>` : ''}
-                ${p.linkedin ? `<strong>LinkedIn:</strong> ${p.linkedin}` : ''}
-            </div>
-        </div>
-        `;
+        html += `<div class="res-section"><div class="res-section-title">Links</div><div class="res-item-desc">${p.github ? `<strong>GitHub:</strong> ${p.github}<br>` : ''}${p.linkedin ? `<strong>LinkedIn:</strong> ${p.linkedin}` : ''}</div></div>`;
     }
 
     return html;
 }
 
-// --- ATS SCORING ---
+function switchTemplate(template) {
+    state.selectedTemplate = template;
+    saveState();
+    renderResume();
+}
+
+// --- ATS SCORING & IMPROVEMENTS ---
 function calculateATSScore() {
     let score = 0;
-    const suggestions = [];
+    const improvements = [];
     const resume = state.resume;
     const p = resume.personal;
 
@@ -225,19 +252,21 @@ function calculateATSScore() {
     if (summaryWords >= 40 && summaryWords <= 120) {
         score += 15;
     } else {
-        suggestions.push("Write a stronger summary (40–120 words).");
+        if (summaryWords < 40) improvements.push("Write a stronger summary (40–120 words).");
     }
 
     // 2. At least 2 projects
     if (resume.projects.length >= 2) {
         score += 10;
     } else {
-        suggestions.push("Add at least 2 projects.");
+        improvements.push("Add at least 2 projects.");
     }
 
     // 3. At least 1 experience entry
     if (resume.experience.length >= 1) {
         score += 10;
+    } else {
+        improvements.push("Add internship or project work experience.");
     }
 
     // 4. Skills list has >= 8 items
@@ -245,7 +274,7 @@ function calculateATSScore() {
     if (skills.length >= 8) {
         score += 10;
     } else {
-        suggestions.push("Add more skills (target 8+).");
+        improvements.push("Add more skills (target 8+).");
     }
 
     // 5. GitHub or LinkedIn exists
@@ -255,14 +284,14 @@ function calculateATSScore() {
 
     // 6. Measurable impact (numbers) in experience or project bullets
     const hasNumbers = (entry) => {
-        const text = entry.desc || '';
-        return /[0-9]%|[0-9]+x|[0-9]+k|[0-9]+%/i.test(text) || /[0-9]/.test(text); // simplified but covers numbers
+        const text = (entry.desc || '').toLowerCase();
+        return /[0-9]/.test(text);
     };
     const anyNumbers = [...resume.experience, ...resume.projects].some(hasNumbers);
     if (anyNumbers) {
         score += 15;
     } else {
-        suggestions.push("Add measurable impact (numbers) in bullets.");
+        improvements.push("Add measurable impact (numbers) in bullets.");
     }
 
     // 7. Education complete
@@ -271,10 +300,8 @@ function calculateATSScore() {
         score += 10;
     }
 
-    // Cap at 100
     score = Math.min(100, score);
-
-    return { score, suggestions: suggestions.slice(0, 3) };
+    return { score, suggestions: improvements.slice(0, 3) };
 }
 
 function renderATSScore() {
@@ -328,19 +355,35 @@ function renderFormEntries(type) {
     const list = document.getElementById(`${type}-form-list`);
     if (!list) return;
 
-    list.innerHTML = state.resume[type].map((entry, i) => `
+    list.innerHTML = state.resume[type].map((entry, i) => {
+        const fields = Object.keys(entry);
+        return `
         <div class="entry-list-item">
             <div style="display: flex; justify-content: flex-end;">
                 <button onclick="removeEntry('${type}', ${i})" style="background: none; border: none; font-size: 10px; color: red; cursor: pointer;">Remove</button>
             </div>
-            ${Object.keys(entry).map(key => `
+            ${fields.map(key => {
+            let guidance = '';
+            if (key === 'desc' && (type === 'experience' || type === 'projects')) {
+                const val = entry[key] || '';
+                const actionVerbs = ['built', 'developed', 'designed', 'implemented', 'led', 'improved', 'created', 'optimized', 'automated'];
+                const hasActionVerb = actionVerbs.some(v => val.toLowerCase().startsWith(v));
+                const hasNumbers = /[0-9]/.test(val);
+
+                if (val && !hasActionVerb) guidance += `<div class="guidance-hint">Start with a strong action verb.</div>`;
+                if (val && !hasNumbers) guidance += `<div class="guidance-hint">Add measurable impact (numbers).</div>`;
+            }
+
+            return `
                 <div class="form-group">
                     <label class="input-label">${key}</label>
                     <input type="text" class="form-control" value="${entry[key]}" oninput="updateEntry('${type}', ${i}, '${key}', this.value)">
+                    ${guidance}
                 </div>
-            `).join('')}
+                `;
+        }).join('')}
         </div>
-    `).join('');
+    `}).join('');
 }
 
 function updateEntry(type, index, key, value) {
