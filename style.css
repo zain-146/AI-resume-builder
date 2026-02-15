@@ -1281,3 +1281,78 @@ p {
         width: 100% !important;
     }
 }
+
+/* REFERENCE DESIGN ALIGNMENT */
+:root {
+    --color-bg: #F7F6F3;
+    --color-text-primary: #111111;
+    --color-accent: #8B0000;
+    --color-success: #4A6741;
+    --color-warning: #C19A6B;
+    --color-white: #FFFFFF;
+    --color-border: rgba(17, 17, 17, 0.1);
+    --color-input-border: rgba(17, 17, 17, 0.2);
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+    --radius: 2px;
+    --transition: 0.18s ease-in-out;
+    --resume-accent-color: #8B0000;
+}
+
+body {
+    background-color: var(--color-bg) !important;
+    font-family: var(--font-body) !important;
+}
+
+h1, h2, h3, h4, .brand {
+    font-family: var(--font-heading) !important;
+}
+
+.top-nav {
+    border-bottom: 1px solid var(--color-border) !important;
+    background: var(--color-white) !important;
+}
+
+.btn-primary {
+    background: var(--color-accent) !important;
+}
+
+.btn-primary:hover {
+    background: #6d0000 !important;
+}
+
+.form-workspace, .proof-card-premium {
+    background: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: none !important;
+}
+
+.form-control {
+    border-radius: var(--radius) !important;
+    border-color: var(--color-input-border) !important;
+}
+
+.form-control:focus {
+    border-color: var(--color-accent) !important;
+}
+
+/* Resume Paper Alignment */
+.resume-paper {
+    background: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: 0 !important;
+}
+
+.res-section-title {
+    font-family: var(--font-heading) !important;
+    color: var(--color-accent) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--color-border) !important;
+}
+
+.status-badge.status-shipped {
+    background: #4a674133 !important;
+    color: #155724 !important;
+}

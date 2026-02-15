@@ -811,27 +811,27 @@ function updateEntry(type, index, key, value) {
 function loadSampleData() {
     state.resume = {
         personal: {
-            name: 'Zain Ul Abideen',
-            email: 'zain@example.com',
-            phone: '+91 91234 56789',
-            location: 'Mumbai, India',
-            summary: 'Ambitious Software Engineer with a passion for building premium user experiences and highly scalable frontend architectures. Expert in React and modern UI/UX design patterns.',
-            github: 'github.com/zain-146',
-            linkedin: 'linkedin.com/in/zain'
+            name: 'Alexander Sterling',
+            email: 'a.sterling@executive.com',
+            phone: '+1 (555) 012-3456',
+            location: 'New York, NY',
+            summary: 'Distinguished Software Architect with over 10 years of experience in designing high-concurrency systems and premium digital experiences. Proven track record in leading cross-functional teams to deliver scalable, enterprise-grade solutions with a focus on minimalist design and performance optimization.',
+            github: 'github.com/sterling-arch',
+            linkedin: 'linkedin.com/in/asterling'
         },
         experience: [
-            { company: 'KodNest Tech', role: 'Full Stack Developer', duration: '2023 - Present', desc: 'Leading the development of premium build systems and SaaS dashboards.' }
+            { company: 'Technova Global', role: 'Chief Software Architect', duration: '2018 - Present', desc: 'Orchestrated the architectural migration of legacy systems to a modern microservices-based infrastructure, resulting in a 40% increase in system reliability.' }
         ],
         education: [
-            { school: 'Indian Institute of Technology', degree: 'B.Tech Computer Science', year: '2023' }
+            { school: 'Stanford University', degree: 'M.S. in Computer Science', year: '2015' }
         ],
         projects: [
-            { title: 'AI Resume Builder', desc: 'A real-time resume builder with ATS scoring and professional templates.', techStack: ['React', 'JavaScript', 'CSS'], liveUrl: '#', githubUrl: 'https://github.com/zain-146/AI-resume-builder' }
+            { title: 'Nexus Enterprise Framework', desc: 'A proprietary frontend framework built for high-performance financial dashboards, utilizing advanced state management and custom rendering engines.', techStack: ['TypeScript', 'React', 'Rust'], liveUrl: '#', githubUrl: '#' }
         ],
         skills: {
-            technical: ['JavaScript', 'React', 'Node.js', 'TypeScript'],
-            soft: ['Problem Solving', 'Teamwork'],
-            tools: ['Git', 'VS Code', 'Docker']
+            technical: ['System Systems Architecture', 'Distributed Computing', 'Cloud Native Design', 'TypeScript'],
+            soft: ['Strategic Planning', 'Technical Leadership', 'Stakeholder Management'],
+            tools: ['Kubernetes', 'AWS', 'Terraform', 'CI/CD Pipelines']
         }
     };
 
